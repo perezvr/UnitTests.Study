@@ -4,6 +4,6 @@ namespace UnitTests.Study.Services.Interfaces
 {
     public interface IMovieRepository
     {
-        Task<Movie> GetMovieByIdAsync(int id);
+        Task<Movie?> GetMovieByIdAsync(int id);
     }
 }

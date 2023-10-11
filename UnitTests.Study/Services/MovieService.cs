@@ -14,31 +14,22 @@ namespace UnitTests.Study.Services
             _movieRepository = movieRepository;
         }
 
-        public async Task<Movie> GetMovieByIdAsync(int id)
+        public async Task<Movie?> GetMovieByIdAsync(int id)
         {
-            // Tente buscar o filme no Redis pelo ID
             var movieFromRedis = await _redisService.GetMovieByIdAsync(id);
 
-            if (movieFromRedis != null)
-            {
+            if (movieFromRedis is not null)
                 return movieFromRedis;
-            }
-            else
+
+            var movieFromRepo = await _movieRepository.GetMovieByIdAsync(id);
+
+            if (movieFromRepo is not null)
             {
-                // Se não encontrou no Redis, procure na MovieRepository
-                var movieFromRepo = await _movieRepository.GetMovieByIdAsync(id);
-                if (movieFromRepo != null)
-                {
-                    // Adicione o filme encontrado ao Redis para cache
-                    await _redisService.AddMovieToCacheAsync(movieFromRepo);
-                    return movieFromRepo;
-                }
-                else
-                {
-                    // O filme não foi encontrado em nenhum lugar
-                    return null;
-                }
+                await _redisService.AddMovieToCacheAsync(movieFromRepo);
+                return movieFromRepo;
             }
+
+            return null;
         }
     }
 }
