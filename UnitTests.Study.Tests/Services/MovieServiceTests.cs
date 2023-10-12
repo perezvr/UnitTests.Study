@@ -24,16 +24,18 @@ namespace UnitTests.Study.Tests.Services
         public async Task GetMovieByIdAsync_Should_Return_Movie_From_Redis_If_Present()
         {
             // Arrange
+            var expected = _movieFakerFixture.GetMovieFaker().Generate();
+
             A.CallTo(() => _redisServiceFake.GetMovieByIdAsync(A<int>.Ignored))
-                .Returns(_movieFakerFixture.GetMovieFaker().Generate());
+                .Returns(expected);
 
             var movieService = new MovieService(_redisServiceFake, _movieRepositoryFake);
 
             // Act
-            var result = await movieService.GetMovieByIdAsync(1);
+            var actual = await movieService.GetMovieByIdAsync(1);
 
             // Assert
-            result.Should().NotBeNull();
+            actual.Should().BeEquivalentTo(expected);
             A.CallTo(() => _redisServiceFake.GetMovieByIdAsync(A<int>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _movieRepositoryFake.GetMovieByIdAsync(A<int>.Ignored)).MustNotHaveHappened();
         }
@@ -42,18 +44,20 @@ namespace UnitTests.Study.Tests.Services
         public async Task GetMovieByIdAsync_Should_Return_Movie_From_Repository_If_Not_In_Redis()
         {
             // Arrange
-            A.CallTo(() => _redisServiceFake.GetMovieByIdAsync(A<int>.Ignored)).Returns<Movie?>(null);
+            var expected = _movieFakerFixture.GetMovieFaker().Generate();
 
-            var movieInRepository = new Movie { Id = 1, Title = "Real Movie" };
-            A.CallTo(() => _movieRepositoryFake.GetMovieByIdAsync(A<int>.Ignored)).Returns(movieInRepository);
+            A.CallTo(() => _redisServiceFake.GetMovieByIdAsync(A<int>.Ignored))
+                .Returns<Movie?>(null);
+            A.CallTo(() => _movieRepositoryFake.GetMovieByIdAsync(A<int>.Ignored))
+                .Returns(expected);
 
             var movieService = new MovieService(_redisServiceFake, _movieRepositoryFake);
 
             // Act
-            var result = await movieService.GetMovieByIdAsync(1);
+            var actual = await movieService.GetMovieByIdAsync(1);
 
             // Assert
-            result.Should().NotBeNull();
+            actual.Should().BeEquivalentTo(expected);
             A.CallTo(() => _redisServiceFake.GetMovieByIdAsync(A<int>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => _movieRepositoryFake.GetMovieByIdAsync(A<int>.Ignored)).MustHaveHappenedOnceExactly();
         }
