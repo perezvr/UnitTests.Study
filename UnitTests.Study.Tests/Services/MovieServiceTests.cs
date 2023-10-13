@@ -1,5 +1,4 @@
-﻿using FakeItEasy;
-using UnitTests.Study.Entities;
+﻿using UnitTests.Study.Entities;
 using UnitTests.Study.Services;
 using UnitTests.Study.Services.Interfaces;
 using UnitTests.Study.Tests.Fixtures;

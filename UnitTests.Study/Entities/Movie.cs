@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UnitTests.Study.Entities
+﻿namespace UnitTests.Study.Entities
 {
     public class Movie
     {
-        public int Id { get; set; }            
-        public string Title { get; set; }      
-        public string Director { get; set; }   
-        public int Year { get; set; }          
-        public MovieGenre Genre { get; set; }      
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Director { get; set; } = string.Empty;
+        public int Year { get; set; }
+        public MovieGenre Genre { get; set; }
         public double Rating { get; set; }
 
         public enum MovieGenre
